@@ -41,7 +41,7 @@ const updateUser = asyncHandler(async (req, res) => {
 
     const updatedUser = await user.save()
 
-    res.json(updateUser)
+    res.json(updatedUser)
   } else {
     res.json({ message: "The user does not exist!" })
   }
