@@ -14,14 +14,12 @@ const getAllUsers = asyncHandler(async (req, res) => {
 // @Method       - GET
 // @Route        - /api/users/:id
 const getSpecificUser = asyncHandler(async (req, res) => {
-  const id = req.params.id
+  try {
+    const user = await Users.findById(req.params.id)
 
-  const user = await Users.findById(id)
-
-  if (user) {
     res.json(user)
-  } else {
-    res.json({ message: "The user does not exist!" })
+  } catch (error) {
+    throw Error("The user does not exist!")
   }
 })
 
@@ -29,12 +27,12 @@ const getSpecificUser = asyncHandler(async (req, res) => {
 // @Method       - PATCH
 // @Route        - /api/users/:id
 const updateUser = asyncHandler(async (req, res) => {
-  const id = req.params.id
-  const { firstName, lastName, password } = req.body
+  try {
+    const id = req.params.id
+    const { firstName, lastName, password } = req.body
 
-  const user = await Users.findById(id)
+    const user = await Users.findById(id)
 
-  if (user) {
     user.firstName = firstName ? firstName : user.firstName
     user.lastName = lastName ? lastName : user.lastName
     user.password = password ? password : user.password
@@ -42,8 +40,8 @@ const updateUser = asyncHandler(async (req, res) => {
     const updatedUser = await user.save()
 
     res.json(updatedUser)
-  } else {
-    res.json({ message: "The user does not exist!" })
+  } catch (error) {
+    throw Error("The user does not exist!")
   }
 })
 
@@ -66,10 +64,10 @@ const registerUser = asyncHandler(async (req, res) => {
 
       res.json(newUser)
     } else {
-      res.json({ message: "Please complete all fields!" })
+      throw Error("Please complete all fields!")
     }
   } else {
-    res.json({ message: "The email is invalid!" })
+    throw Error("The email is invalid!")
   }
 })
 
@@ -85,10 +83,10 @@ const loginUser = asyncHandler(async (req, res) => {
     if (existsUser.password === password) {
       res.json(existsUser)
     } else {
-      res.json({ message: "The password is invalid!" })
+      throw Error("The password is invalid!")
     }
   } else {
-    res.json({ message: "The email is invalid!" })
+    throw Error("The email is invalid!")
   }
 })
 
