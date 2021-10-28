@@ -87,7 +87,7 @@ const loginUser = asyncHandler(async (req, res) => {
   const existsUser = await Users.findOne({ email })
 
   if (existsUser) {
-    if (existsUser.password === password) {
+    if (await existsUser.matchPassword(password)) {
       res.json({
         id: existsUser._id,
         firstname: existsUser.firstName,
