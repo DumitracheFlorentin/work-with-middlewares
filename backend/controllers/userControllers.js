@@ -1,5 +1,6 @@
 import asyncHandler from "express-async-handler"
 import Users from "../models/usersModel.js"
+import generateToken from "../utils/generateToken.js"
 
 // @Description  - GET ALL USERS
 // @Method       - GET
@@ -17,7 +18,13 @@ const getSpecificUser = asyncHandler(async (req, res) => {
   try {
     const user = await Users.findById(req.params.id)
 
-    res.json(user)
+    res.json({
+      id: user._id,
+      firstname: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      token: generateToken(user._id),
+    })
   } catch (error) {
     throw Error("The user does not exist!")
   }
@@ -81,7 +88,13 @@ const loginUser = asyncHandler(async (req, res) => {
 
   if (existsUser) {
     if (existsUser.password === password) {
-      res.json(existsUser)
+      res.json({
+        id: existsUser._id,
+        firstname: existsUser.firstName,
+        lastName: existsUser.lastName,
+        email: existsUser.email,
+        token: generateToken(existsUser._id),
+      })
     } else {
       throw Error("The password is invalid!")
     }
@@ -90,4 +103,22 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 })
 
-export { getAllUsers, getSpecificUser, registerUser, loginUser, updateUser }
+// @Description  - GET PROFILE DETAILS
+// @Method       - GET
+// @Route        - /api/users/profile/details
+const detailsUser = asyncHandler(async (req, res) => {
+  try {
+    res.json(req.userDetails)
+  } catch (error) {
+    throw Error("No Valid Token!")
+  }
+})
+
+export {
+  getAllUsers,
+  getSpecificUser,
+  registerUser,
+  loginUser,
+  updateUser,
+  detailsUser,
+}
